@@ -2,8 +2,8 @@ import 'dart:io';
 
 void main() {
   print('Enter a number:');
-  String? input = stdin.readLineSync();  // Read user input
-  int number = int.tryParse(input ?? '') ?? 0;  // Convert input to integer
+  String? input = stdin.readLineSync();  
+  int number = int.tryParse(input ?? '') ?? 0;  
 
   if (number > 0) {
     print('The number is positive.');
