@@ -1,0 +1,41 @@
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MainApp());
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Column Layout Example"),
+        ),
+        body:Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.yellow,
+              child: const Text('Yellow',style: TextStyle(fontSize: 24),
+              ),
+            ),
+           SizedBox(height:20),
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.red,
+              child: const Text('Red',style: TextStyle(fontSize: 24),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
