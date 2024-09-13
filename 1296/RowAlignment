@@ -20,17 +20,17 @@ class MainApp extends StatelessWidget {
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(20),
-              color: Colors.red, // Corrected the color usage
+              color: Colors.red,
               child: const Text('RED'),
             ),
             Container(
               padding: EdgeInsets.all(20),
-              color: Colors.red, // Corrected the color usage
+              color: Colors.red,
               child: const Text('GREEN'),
             ),
             Container(
               padding: EdgeInsets.all(20),
-              color: Colors.red, // Corrected the color usage
+              color: Colors.red, 
               child: const Text('Yellow'),
             ),
           ],
