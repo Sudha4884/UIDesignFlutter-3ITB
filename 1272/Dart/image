@@ -1,0 +1,33 @@
+main in lib
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Butterfly'),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // Adding an image
+            Image.asset('assets/butterfly.jpeg'),
+            SizedBox(height: 20), // Adding space between the image and text
+            Text(
+              'Butterfly',
+              style: TextStyle(fontSize: 24),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
