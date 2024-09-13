@@ -1,0 +1,42 @@
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MainApp());
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Row Layout Example"),
+        ),
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.red, // Corrected the color usage
+              child: const Text('RED'),
+            ),
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.red, // Corrected the color usage
+              child: const Text('GREEN'),
+            ),
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.red, // Corrected the color usage
+              child: const Text('Yellow'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
