@@ -13,7 +13,7 @@
           appBar: AppBar(
             title: Text('Row Layout Example'),
           ),
-          body: Column(
+          body: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Container(
