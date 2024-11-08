@@ -1,0 +1,173 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('Custom Widgets Example')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomButton(
+                text: 'Press Me',
+                onPressed: () {
+                  print('Button Pressed');
+                },
+              ),
+              SizedBox(height: 20),
+              CustomDatePicker(),
+              SizedBox(height: 20),
+              CustomToggleSwitch(),
+              SizedBox(height: 20),
+              CustomProgressBar(progress: 0.7),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  const CustomButton({Key? key, required this.text, required this.onPressed})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: Colors.blue, // Button color
+        onPrimary: Colors.white, // Text color
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      onPressed: onPressed,
+      child: Text(text),
+    );
+  }
+}
+
+class CustomDatePicker extends StatefulWidget {
+  @override
+  _CustomDatePickerState createState() => _CustomDatePickerState();
+}
+
+class _CustomDatePickerState extends State<CustomDatePicker> {
+  DateTime? selectedDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _selectDate(context),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(
+          selectedDate == null
+              ? 'Select a date'
+              : '${selectedDate!.toLocal()}'.split(' ')[0],
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomToggleSwitch extends StatefulWidget {
+  @override
+  _CustomToggleSwitchState createState() => _CustomToggleSwitchState();
+}
+
+class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
+  bool isToggled = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          isToggled = !isToggled;
+        });
+      },
+      child: Container(
+        width: 50,
+        height: 30,
+        decoration: BoxDecoration(
+          color: isToggled ? Colors.green : Colors.grey,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+              duration: Duration(milliseconds: 200),
+              left: isToggled ? 20 : 0,
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomProgressBar extends StatelessWidget {
+  final double progress; // Value between 0.0 and 1.0
+
+  const CustomProgressBar({Key? key, required this.progress}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final clampedProgress = progress.clamp(0.0, 1.0); // Ensures progress is within bounds
+
+    return Container(
+      width: double.infinity,
+      height: 20,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: FractionallySizedBox(
+        widthFactor: clampedProgress,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.green,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+}
