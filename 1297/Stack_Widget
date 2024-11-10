@@ -1,1 +1,43 @@
 
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('Stack Example')),
+        body: Stack(
+          alignment: Alignment.center,  // Align all items to the center of the stack
+          children: <Widget>[
+            Container(
+              color: Colors.red,  // Background color
+              width: 200,         // Width of the container
+              height: 200,        // Height of the container
+              alignment: Alignment.center,
+              child: Text('Item 1', style: TextStyle(color: Colors.white)),
+            ),
+            Container(
+              color: Colors.green,
+              width: 150,
+              height: 150,
+              alignment: Alignment.center,
+              child: Text('Item 2', style: TextStyle(color: Colors.white)),
+            ),
+            Container(
+              color: Colors.blue,
+              width: 100,
+              height: 100,
+              alignment: Alignment.center,
+              child: Text('Item 3', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
