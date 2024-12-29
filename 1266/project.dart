@@ -1,1 +1,211 @@
+import 'package:flutter/material.dart';
 
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Bank Registration Form',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const BankRegistrationForm(),
+    );
+  }
+}
+
+class BankRegistrationForm extends StatefulWidget {
+  const BankRegistrationForm({super.key});
+
+  @override
+  _BankRegistrationFormState createState() => _BankRegistrationFormState();
+}
+
+class _BankRegistrationFormState extends State<BankRegistrationForm> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  bool _passwordMatch = true;
+  String _popupMessage = '';
+  bool _showPopup = false;
+
+  void _showPopupMessage(String message) {
+    setState(() {
+      _popupMessage = message;
+      _showPopup = true;
+    });
+    Future.delayed(const Duration(seconds: 3), () {
+      setState(() {
+        _showPopup = false;
+      });
+    });
+  }
+
+  void _register() {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      _showPopupMessage('Passwords do not match!');
+      return;
+    }
+    if (_formKey.currentState?.validate() ?? false) {
+      _showPopupMessage('Registration Successful!');
+    } else {
+      _showPopupMessage('Please fill in all fields.');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blueGrey[50],
+      appBar: AppBar(
+        title: const Text('Bank Registration'),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              child: AnimatedOpacity(
+                opacity: _showPopup ? 0.2 : 1.0,
+                duration: const Duration(milliseconds: 500),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (_showPopup)
+                        AnimatedOpacity(
+                          opacity: _showPopup ? 1.0 : 0.0,
+                          duration: const Duration(seconds: 1),
+                          child: Container(
+                            color: Colors.black.withOpacity(0.7),
+                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                            child: Text(
+                              _popupMessage,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 30),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Username Field
+                            TextFormField(
+                              controller: _usernameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Username',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your username';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 15),
+                            // Email Field
+                            TextFormField(
+                              controller: _emailController,
+                              decoration: const InputDecoration(
+                                labelText: 'Email',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty || !value.contains('@')) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 15),
+                            // Password Field
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Password',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 15),
+                            // Confirm Password Field
+                            TextFormField(
+                              controller: _confirmPasswordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Confirm Password',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value != _passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 30),
+                            // Register Button
+                            ElevatedButton(
+                              onPressed: _register,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 12), backgroundColor: Colors.blueAccent,
+                                minimumSize: const Size(double.infinity, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                'Register',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
