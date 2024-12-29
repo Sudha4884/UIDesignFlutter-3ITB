@@ -1,0 +1,182 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: FlipCardScreen(),
+    );
+  }
+}
+
+class FlipCardScreen extends StatefulWidget {
+  @override
+  _FlipCardScreenState createState() => _FlipCardScreenState();
+}
+
+class _FlipCardScreenState extends State<FlipCardScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool isFront = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+  }
+
+  void toggleCard() {
+    if (isFront) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+    setState(() {
+      isFront = !isFront;
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFEEEEEE),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: toggleCard,
+              child: AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  final angle = _animation.value * pi;
+                  final isFlipped = angle > pi / 2;
+
+                  return Transform(
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, 0.001) // Perspective effect
+                      ..rotateY(angle),
+                    alignment: Alignment.center,
+                    child: isFlipped
+                        ? Transform(
+                            transform: Matrix4.identity()..rotateY(pi),
+                            alignment: Alignment.center,
+                            child: buildBackCard(context),
+                          )
+                        : buildFrontCard(context),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Tap on the card to flip",
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildFrontCard(BuildContext context) {
+    return buildCard(
+      title: "Log in",
+      inputs: [
+        buildInputField("Email"),
+        buildInputField("Password", obscureText: true),
+      ],
+      buttonText: "Let's go!",
+    );
+  }
+
+  Widget buildBackCard(BuildContext context) {
+    return buildCard(
+      title: "Sign up",
+      inputs: [
+        buildInputField("Name"),
+        buildInputField("Email"),
+        buildInputField("Password", obscureText: true),
+      ],
+      buttonText: "Confirm!",
+    );
+  }
+
+  Widget buildCard({
+    required String title,
+    required List<Widget> inputs,
+    required String buttonText,
+  }) {
+    return Card(
+      elevation: 10,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      color: const Color(0xFF111111),
+      child: Container(
+        width: 300,
+        height: 400,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ...inputs,
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2D8CF0),
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              ),
+              child: Text(buttonText, style: const TextStyle(fontSize: 16)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildInputField(String hintText, {bool obscureText = false}) {
+    return TextField(
+      obscureText: obscureText,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Color(0xFF7E7E7E)),
+        filled: true,
+        fillColor: const Color(0xFF222222),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      ),
+    );
+  }
+}
