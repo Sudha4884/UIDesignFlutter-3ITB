@@ -1,0 +1,107 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MeditationApp());
+}
+
+class MeditationApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Meditation App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: MeditationHome(),
+    );
+  }
+}
+
+class MeditationHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Meditation App'),
+        backgroundColor: Colors.teal[500], // Corrected color reference
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade300, Colors.teal.shade300],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome to Meditation',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 40),
+              MeditationButton(
+                title: '10 Minute Relaxation',
+                onPressed: () {
+                  // Add functionality for 10 minutes relaxation
+                },
+              ),
+              SizedBox(height: 20),
+              MeditationButton(
+                title: '20 Minute Mindfulness',
+                onPressed: () {
+                  // Add functionality for 20 minutes mindfulness
+                },
+              ),
+              SizedBox(height: 20),
+              MeditationButton(
+                title: '30 Minute Deep Meditation',
+                onPressed: () {
+                  // Add functionality for 30 minutes deep meditation
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MeditationButton extends StatelessWidget {
+  final String title;
+  final VoidCallback onPressed;
+
+  MeditationButton({required this.title, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.teal[500], // Use backgroundColor instead of primary
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        textStyle: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+}
