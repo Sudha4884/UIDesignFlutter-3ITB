@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: DigitalClock(),
+    );
+  }
+}
+
+class DigitalClock extends StatefulWidget {
+  @override
+  _DigitalClockState createState() => _DigitalClockState();
+}
+
+class _DigitalClockState extends State<DigitalClock> {
+  late String _timeString;
+
+  @override
+  void initState() {
+    super.initState();
+    _timeString = _formatTime(DateTime.now());
+    Timer.periodic(const Duration(seconds: 1), (Timer t) => _updateTime());
+  }
+
+  void _updateTime() {
+    setState(() {
+      _timeString = _formatTime(DateTime.now());
+    });
+  }
+
+  String _formatTime(DateTime time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Digital Clock'),
+      ),
+      body: Center(
+        child: Text(
+          _timeString,
+          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+}
