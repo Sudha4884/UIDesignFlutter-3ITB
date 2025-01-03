@@ -1,0 +1,191 @@
+#"TaskMaster: A Simple Yet Elegant Todo Application"
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<Map<String, dynamic>> todoList = [];
+  String singleValue = "";
+  bool isCompleted = false;
+
+  // Add a task to the list
+  addString(String content) {
+    setState(() {
+      singleValue = content;
+    });
+  }
+
+  // Add new task to the todoList
+  addList() {
+    if (singleValue.isNotEmpty) {
+      setState(() {
+        todoList.add({
+          "value": singleValue,
+          "isCompleted": false,
+        });
+      });
+    }
+  }
+
+  // Delete task from the list
+  deleteItem(int index) {
+    setState(() {
+      todoList.removeAt(index);
+    });
+  }
+
+  // Toggle task completion status
+  toggleCompletion(int index) {
+    setState(() {
+      todoList[index]['isCompleted'] = !todoList[index]['isCompleted'];
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Todo Application",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
+        ),
+        centerTitle: true,
+        toolbarHeight: 75,
+        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 90,
+              child: ListView.builder(
+                itemCount: todoList.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: Colors.teal[100],
+                    elevation: 5,
+                    child: ListTile(
+                      leading: IconButton(
+                        icon: Icon(
+                          todoList[index]['isCompleted']
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: Colors.teal,
+                        ),
+                        onPressed: () => toggleCompletion(index),
+                      ),
+                      title: Text(
+                        todoList[index]['value'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          decoration: todoList[index]['isCompleted']
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => deleteItem(index),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              flex: 10,
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 70,
+                    child: Container(
+                      height: 50,
+                      child: TextField(
+                        onChanged: (content) {
+                          addString(content);
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          fillColor: Colors.teal[50],
+                          filled: true,
+                          labelText: 'Create Task....',
+                          labelStyle: const TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          suffixIcon: Icon(
+                            Icons.task,
+                            color: Colors.teal[400],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 30,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        addList();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text(
+                        "Add Task",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
