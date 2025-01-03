@@ -1,0 +1,148 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(CarSalesApp());
+}
+
+class CarSalesApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Car Sales App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: CarListScreen(),
+    );
+  }
+}
+
+class CarListScreen extends StatelessWidget {
+  final List<Map<String, String>> cars = [
+    {
+      'name': 'Tesla Model S',
+      'price': '\$89,990',
+      'image': 'assets\\telsaImage.avif',
+      'details': 'Electric, 396 mi range, 0-60 mph in 3.1 sec'
+    },
+    {
+      'name': 'Ford Mustang GT',
+      'price': '\$55,300',
+      'image': 'assets\\fordImage.avif',
+      'details': 'V8 Engine, 450 HP, 0-60 mph in 4.2 sec'
+    },
+    {
+      'name': 'Toyota Corolla',
+      'price': '\$25,700',
+      'image': 'assets\\Toyota.png',
+      'details': 'Reliable, Fuel Efficient, 32 MPG'
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Car Sales'),
+        centerTitle: true,
+      ),
+      body: ListView.builder(
+        itemCount: cars.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CarDetailScreen(car: cars[index]),
+                ),
+              );
+            },
+            child: Card(
+              margin: EdgeInsets.all(10),
+              elevation: 5,
+              child: Row(
+                children: [
+                  Image.network(
+                    cars[index]['image']!,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        cars[index]['name']!,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(cars[index]['price']!),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CarDetailScreen extends StatelessWidget {
+  final Map<String, String> car;
+
+  CarDetailScreen({required this.car});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(car['name']!),
+      ),
+      body: Column(
+        children: [
+          Hero(
+            tag: car['name']!,
+            child: Image.network(
+              car['image']!,
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  car['name']!,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  car['details']!,
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  car['price']!,
+                  style: TextStyle(fontSize: 20, color: Colors.green),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
