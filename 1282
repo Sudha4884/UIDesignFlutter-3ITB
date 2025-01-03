@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MMSTrackerApp());
+}
+
+class MMSTrackerApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MMS Tracker',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: MMSTrackerHomePage(),
+    );
+  }
+}
+
+class MMSTrackerHomePage extends StatefulWidget {
+  @override
+  _MMSTrackerHomePageState createState() => _MMSTrackerHomePageState();
+}
+
+class _MMSTrackerHomePageState extends State<MMSTrackerHomePage> {
+  final List<String> _sentMessages = [];
+  final List<String> _receivedMessages = [];
+  final TextEditingController _messageController = TextEditingController();
+  String _messageType = 'Sent'; // Default message type
+
+  void _addMessage() {
+    if (_messageController.text.isNotEmpty) {
+      setState(() {
+        if (_messageType == 'Sent') {
+          _sentMessages.add(_messageController.text);
+        } else {
+          _receivedMessages.add(_messageController.text);
+        }
+      });
+      _messageController.clear();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('MMS Tracker'),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      labelText: 'Enter message',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                DropdownButton<String>(
+                  value: _messageType,
+                  items: ['Sent', 'Received']
+                      .map((type) => DropdownMenuItem(
+                            value: type,
+                            child: Text(type),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _messageType = value!;
+                    });
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: _addMessage,
+                  child: Text('Add'),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Sent Messages', style: TextStyle(fontSize: 18)),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _sentMessages.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(_sentMessages[index]),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Received Messages', style: TextStyle(fontSize: 18)),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _receivedMessages.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(_receivedMessages[index]),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

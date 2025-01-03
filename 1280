@@ -1,0 +1,139 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+void main() {
+  runApp(EventCountdownApp());
+}
+
+class EventCountdownApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: EventCountdownHome(),
+    );
+  }
+}
+
+class EventCountdownHome extends StatefulWidget {
+  @override
+  _EventCountdownHomeState createState() => _EventCountdownHomeState();
+}
+
+class _EventCountdownHomeState extends State<EventCountdownHome> {
+  DateTime? _selectedDate;
+  String? _eventName;
+
+  Duration _calculateCountdown(DateTime date) {
+    return date.difference(DateTime.now());
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
+  void _reset() {
+    setState(() {
+      _selectedDate = null;
+      _eventName = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Event Countdown"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _reset,
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                labelText: "Event Name",
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _eventName = value;
+                });
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _selectDate(context),
+              child: Text("Select Event Date"),
+            ),
+            SizedBox(height: 20),
+            if (_selectedDate != null && _eventName != null) ...[
+              Text(
+                "$_eventName",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              CountdownDisplay(
+                duration: _calculateCountdown(_selectedDate!),
+              ),
+            ] else
+              Text(
+                "Please enter event details and select a date",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CountdownDisplay extends StatelessWidget {
+  final Duration duration;
+
+  CountdownDisplay({required this.duration});
+
+  String _formatDuration(Duration d) {
+    final days = d.inDays;
+    final hours = d.inHours % 24;
+    final minutes = d.inMinutes % 60;
+    final seconds = d.inSeconds % 60;
+    return "${days}d ${hours}h ${minutes}m ${seconds}s";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          "Countdown:",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        Text(
+          _formatDuration(duration),
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
+        ),
+      ],
+    );
+  }
+}
