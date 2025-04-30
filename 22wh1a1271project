@@ -1,0 +1,168 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
+void main() {
+  runApp(DoodleApp());
+}
+
+class DoodleApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: DoodleScreen(),
+    );
+  }
+}
+
+class DoodleScreen extends StatefulWidget {
+  @override
+  _DoodleScreenState createState() => _DoodleScreenState();
+}
+
+class _DoodleScreenState extends State<DoodleScreen> {
+  List<Offset?> _points = [];
+  List<List<Offset?>> _undoStack = [];
+  List<List<Offset?>> _redoStack = [];
+  Color _currentColor = Colors.black;
+  double _brushSize = 5.0;
+
+  void _pickColor() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Pick a color"),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _currentColor,
+              onColorChanged: (Color color) {
+                setState(() {
+                  _currentColor = color;
+                });
+              },
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              child: Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _undo() {
+    if (_points.isNotEmpty) {
+      _redoStack.add(List.of(_points));
+      setState(() {
+        _points = _undoStack.isNotEmpty ? _undoStack.removeLast() : [];
+      });
+    }
+  }
+
+  void _redo() {
+    if (_redoStack.isNotEmpty) {
+      _undoStack.add(List.of(_points));
+      setState(() {
+        _points = _redoStack.removeLast();
+      });
+    }
+  }
+
+  void _save() {
+    // TODO: Implement save functionality.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Save functionality is not implemented yet.")),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Doodle"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.undo),
+            onPressed: _undo,
+          ),
+          IconButton(
+            icon: Icon(Icons.redo),
+            onPressed: _redo,
+          ),
+          IconButton(
+            icon: Icon(Icons.color_lens),
+            onPressed: _pickColor,
+          ),
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _save,
+          ),
+        ],
+      ),
+      body: GestureDetector(
+        onPanStart: (details) {
+          setState(() {
+            _redoStack.clear();
+            _undoStack.add(List.of(_points));
+            _points.add(details.localPosition);
+          });
+        },
+        onPanUpdate: (details) {
+          setState(() {
+            _points.add(details.localPosition);
+          });
+        },
+        onPanEnd: (details) {
+          setState(() {
+            _points.add(null);
+          });
+        },
+        child: CustomPaint(
+          painter: DoodlePainter(_points, _currentColor, _brushSize),
+          size: Size.infinite,
+        ),
+      ),
+      bottomNavigationBar: Slider(
+        min: 1.0,
+        max: 20.0,
+        value: _brushSize,
+        onChanged: (value) {
+          setState(() {
+            _brushSize = value;
+          });
+        },
+      ),
+    );
+  }
+}
+
+class DoodlePainter extends CustomPainter {
+  final List<Offset?> points;
+  final Color color;
+  final double brushSize;
+
+  DoodlePainter(this.points, this.color, this.brushSize);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = color
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = brushSize;
+
+    for (int i = 0; i < points.length - 1; i++) {
+      if (points[i] != null && points[i + 1] != null) {
+        canvas.drawLine(points[i]!, points[i + 1]!, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(DoodlePainter oldDelegate) => true;
+}
