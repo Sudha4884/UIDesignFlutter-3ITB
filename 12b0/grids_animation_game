@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Grid Animation Game',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const GridAnimationGame(),
+    );
+  }
+}
+
+class GridAnimationGame extends StatefulWidget {
+  const GridAnimationGame({super.key});
+
+  @override
+  _GridAnimationGameState createState() => _GridAnimationGameState();
+}
+
+class _GridAnimationGameState extends State<GridAnimationGame> {
+  List<Color> _gridColors = List.generate(9, (index) => Colors.blue);
+
+  // Function to change the color of the tapped cell with animation
+  void _changeColor(int index) {
+    setState(() {
+      // Change the color at the tapped index to a random color
+      _gridColors[index] = _gridColors[index] == Colors.blue
+          ? Colors.orange
+          : Colors.blue;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Grid Animation Game')),
+      body: Center(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, // 3x3 grid
+            crossAxisSpacing: 10, // space between columns
+            mainAxisSpacing: 10, // space between rows
+          ),
+          itemCount: 9, // 9 cells in total (3x3)
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () => _changeColor(index), // Change color on tap
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 500), // Animation duration
+                curve: Curves.easeInOut, // Animation curve
+                decoration: BoxDecoration(
+                  color: _gridColors[index], // Current cell color
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
